@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Maison Dulce</title>
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Quicksand:wght@400;600&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(135deg, #fff9f4 0%, #ffe6f0 100%);
+      color: #422b3d;
+      margin: 0;
+      padding-bottom: 80px;
+    }
+    h1, h2, h3 { font-family: 'Marcellus', serif; }
+    .text-accent { color: #ab4c81; }
+    .bg-accent { background-color: #ab4c81; }
+    .btn-accent {
+      background-color: #ab4c81;
+      color: white;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(171,76,129,0.4);
+      transition: transform 0.3s, box-shadow 0.3s;
+      border-radius: 50px;
+    }
+    .btn-accent:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(171,76,129,0.7);
+    }
+    .btn-accent::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -75%;
+      width: 50%; height: 100%;
+      background: rgba(255,255,255,0.35);
+      transform: skewX(-20deg);
+      transition: left 0.5s;
+      border-radius: 50px;
+    }
+    .btn-accent:hover::after { left: 130%; }
+
+    .card-hover {
+      transition: transform 0.3s;
+    }
+    .card-hover:hover { transform: scale(1.05); z-index: 2; }
+
+    .carrito-container {
+      position: fixed; top: 0; right: 0;
+      width: 300px; height: 100vh;
+      background: white;
+      border-left: 3px solid #ab4c81;
+      box-shadow: -5px 0 10px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      transform: translateX(100%);
+      transition: transform 0.4s ease-in-out;
+      z-index: 1050;
+    }
+    .carrito-container.show { transform: translateX(0); }
+    .carrito-container h4 {
+      color: #7e3e6e; font-weight:700; font-size:1.5rem; text-align:center;
+      margin-bottom:1rem;
+    }
+    #listaCarrito li {
+      display: flex; justify-content: space-between; align-items: center;
+      background: #f7e7f2; padding:0.7rem 1rem; margin-bottom:0.7rem;
+      border-radius:12px; box-shadow:0 2px 6px rgba(171,76,129,0.15);
+      font-weight:600; color: #633a5b; font-size:1.1rem; position: relative;
+    }
+    #listaCarrito li button.remove-item {
+      background: transparent; border: none;
+      color: #ab4c81; font-weight:700; font-size:1.4rem;
+      cursor:pointer; border-radius:50%; width:30px; height:30px;
+      display:flex; align-items:center; justify-content:center;
+      transition: color 0.3s, background 0.3s, box-shadow 0.3s;
+    }
+    #listaCarrito li button.remove-item:hover {
+      color: #d67bb7;
+      background: #fbecec;
+      box-shadow: 0 0 8px #d67bb7;
+    }
+    .footer-magico {
+      background: linear-gradient(180deg, #ab4c81, #894166);
+      color: white;
+      padding: 40px 0;
+      text-align: center;
+    }
+    .footer-magico i.fa-lg {
+      margin: 0 12px; transition: transform 0.3s, color 0.3s;
+    }
+    .footer-magico i.fa-lg:hover {
+      transform: scale(1.2);
+      color: rgba(255,255,255,0.8);
+    }
+
+    #overlayConfirmacion {
+      position: fixed; top:0; left:0;
+      width:100vw; height:100vh;
+      background: rgba(251,236,236,0.95);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      text-align: center;
+      padding: 2rem;
+    }
+    #overlayConfirmacion h2 {
+      font-size:2.5rem; color:#ab4c81; margin-bottom:1rem;
+    }
+    #overlayConfirmacion p {
+      font-size:1.2rem; margin-bottom:1rem;
+    }
+    #overlayConfirmacion ul {
+      list-style: none; padding:0; margin-bottom:2rem;
+    }
+    #overlayConfirmacion button {
+      background: #ab4c81;
+      color: white;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    #overlayConfirmacion button:hover {
+      background:#c76ca2;
+    }
+     .img-plan {
+  height: 240px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="text-center py-5">
+    <h1 class="display-4 text-accent">Maison Dulce</h1>
+    <p class="lead">Dulzura encantadora para momentos inolvidables</p>
+    <button class="btn btn-accent mt-3" onclick="document.getElementById('planes').scrollIntoView({behavior:'smooth'})">
+      Ver nuestros planes
+    </button>
+  </header>
+
+  <!-- Planes -->
+  <section id="planes" class="container py-5">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card shadow-sm h-100 card-hover">
+          <img src="https://i.pinimg.com/736x/76/54/27/765427a9fd9f63ded05246b30ef9a7ef.jpg" class="card-img-top img-plan" alt="Plan Familiar">
+          <div class="card-body text-center">
+            <h5 class="card-title">Plan Familiar</h5>
+            <p>Perfecto para disfrutar con seres queridos.</p>
+            <button class="btn btn-accent w-100 add-to-cart" data-item="Plan Familiar">Añadir</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm h-100 card-hover">
+          <img src="https://i.pinimg.com/736x/7c/dc/15/7cdc1579bc616d0a9b9fe54f758df425.jpg" class="card-img-top img-plan" alt="Plan Cumpleañero">
+          <div class="card-body text-center">
+            <h5 class="card-title">Plan Cumpleañero</h5>
+            <p>Celebra con magia y dulzura.</p>
+            <button class="btn btn-accent w-100 add-to-cart" data-item="Plan Cumpleañero">Añadir</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm h-100 card-hover">
+          <img src="https://i.pinimg.com/736x/7c/dc/15/7cdc1579bc616d0a9b9fe54f758df425.jpg" class="card-img-top img-plan" alt="Plan Evento">
+          <div class="card-body text-center">
+            <h5 class="card-title">Plan Evento</h5>
+            <p>Para reuniones y eventos especiales.</p>
+            <button class="btn btn-accent w-100 add-to-cart" data-item="Plan Evento">Añadir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Carrito -->
+  <div class="carrito-container" id="carrito">
+    <h4>Tu Carrito</h4>
+    <ul id="listaCarrito" class="mb-3"></ul>
+    <p>Total: <strong><span id="total">0</span> Bs</strong></p>
+    <button class="btn btn-accent w-100 mb-2" data-bs-toggle="modal" data-bs-target="#formModal">Reservar</button>
+    <button class="btn btn-secondary w-100" onclick="toggleCarrito()">Cerrar</button>
+  </div>
+
+  <!-- Modal de formulario -->
+  <div class="modal fade" id="formModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content border-0">
+        <div class="modal-header bg-accent text-white">
+          <h5 class="modal-title">Completa tu pedido</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="reservaForm" class="modal-body needs-validation" novalidate>
+          <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre completo</label>
+            <input type="text" id="nombre" class="form-control" required>
+            <div class="invalid-feedback">Por favor ingresa tu nombre.</div>
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Correo electrónico</label>
+            <input type="email" id="email" class="form-control" required>
+            <div class="invalid-feedback">Correo inválido.</div>
+          </div>
+          <div class="mb-3">
+            <label for="detalles" class="form-label">Detalles adicionales</label>
+            <textarea id="detalles" class="form-control" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-accent w-100">Enviar pedido</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay de confirmación -->
+  <div id="overlayConfirmacion">
+    <h2>¡Reserva exitosa! 🧁✨</h2>
+    <p>Gracias por elegir Maison Dulce. Tus planes serán:</p>
+    <ul id="listaConfirmacion"></ul>
+    <button onclick="document.getElementById('overlayConfirmacion').style.display='none'">Volver</button>
+  </div>
+
+  <!-- Footer -->
+   <footer class="footer-magico text-white">
+  <div class="container text-center py-5">
+<footer class="text-white bg-gradient" style="background: linear-gradient(180deg, #ab4c81, #894166);">
+  <div class="container text-center py-5">
+    <h4 class="mb-3" style="font-family: 'Marcellus', serif;">Maison Dulce</h4>
+    <p class="mb-3">Dulzura encantadora desde el corazón del trópico.</p>
+    
+    <div class="mb-4 fs-4">
+      <a href="#" class="text-white me-4"><i class="fab fa-instagram"></i></a>
+      <a href="#" class="text-white me-4"><i class="fab fa-facebook-f"></i></a>
+      <a href="#" class="text-white"><i class="fab fa-tiktok"></i></a>
+    </div>
+
+    <div class="text-smaller" style="font-size: 0.9rem;">
+      <p class="mb-1">📍 Av. Encantada #123 - Chapare Mágico, Bolivia</p>
+      <p class="mb-1">📞 +591 700-00000</p>
+      <p class="mb-3">✉️ maison@dulce.bo</p>
+      <p class="small">&copy; <span id="anio"></span> Maison Dulce. Todos los derechos reservados.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById("anio").textContent = new Date().getFullYear();
+</script>
+
+  <!-- Scripts -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <script>
+    const carrito = document.getElementById("carrito");
+    const lista = document.getElementById("listaCarrito");
+    const totalSpan = document.getElementById("total");
+    const confirmList = document.getElementById("listaConfirmacion");
+    const overlay = document.getElementById("overlayConfirmacion");
+    const precio = 50;
+    let total = 0;
+    const items = new Set();
+
+    document.querySelectorAll(".add-to-cart").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const nombre = btn.dataset.item;
+        if (items.has(nombre)) {
+          alert("Ya está en el carrito.");
+          return;
+        }
+        items.add(nombre);
+        const li = document.createElement("li");
+        li.className = "list-group-item d-flex justify-content-between align-items-center";
+        li.dataset.item = nombre;
+        li.innerHTML = `${nombre} - ${precio} Bs <button class="btn btn-sm btn-outline-danger remove-item">X</button>`;
+        lista.appendChild(li);
+        total += precio;
+        totalSpan.textContent = total;
+        carrito.classList.add("show");
+      });
+    });
+
+    lista.addEventListener("click", e => {
+      if (e.target.classList.contains("remove-item")) {
+        const li = e.target.closest("li");
+        const nombre = li.dataset.item;
+        items.delete(nombre);
+        total -= precio;
+        li.remove();
+        totalSpan.textContent = total;
+        if (items.size === 0) carrito.classList.remove("show");
+      }
+    });
+
+    function toggleCarrito() {
+      carrito.classList.toggle("show");
+    }
+
+    document.getElementById("reservaForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const form = e.target;
+      if (!form.checkValidity()) {
+        form.classList.add("was-validated");
+        return;
+      }
+      confirmList.innerHTML = [...items].map(item => `<li>${item}</li>`).join('');
+      overlay.style.display = "flex";
+      lista.innerHTML = "";
+      items.clear();
+      total = 0;
+      totalSpan.textContent = 0;
+      form.reset();
+      form.classList.remove("was-validated");
+      bootstrap.Modal.getInstance(document.getElementById("formModal")).hide();
+      carrito.classList.remove("show");
+    });
+  </script>
+</body>
+</html>
+
